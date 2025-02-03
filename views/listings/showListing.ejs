@@ -1,0 +1,28 @@
+<% layout("/layouts/boilerplate") %>
+
+    <body>
+        <ul>
+            <li>
+                <%= foundListing.title %>
+            </li>
+            <li>
+                <%= foundListing.description %>
+            </li>
+            <li>
+                <%= foundListing.price %>
+            </li>
+            <li>
+                <%= foundListing.location %>
+            </li>
+            <li>
+                <%= foundListing.country %>
+            </li>
+        </ul>
+
+        <form method="get" action="/listings/<%= foundListing._id %>/edit">
+            <button>Update</button>
+        </form>
+        <form method="post" action="/listings/<%= foundListing._id %>/delete?_method=DELETE">
+            <button>Delete</button>
+        </form>
+    </body>

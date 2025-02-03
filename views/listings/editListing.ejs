@@ -1,0 +1,13 @@
+<% layout("/layouts/boilerplate") %>
+
+    <body>
+
+        <form method="post" action="/listings/<%= foundListing._id %>/update?_method=PUT">
+            <input type="text" name="listing[title]" value="<%= foundListing.title %>">
+            <input type="text" name="listing[description]" value="<%= foundListing.description %>">
+            <input type="number" name="listing[price]" value="<%= foundListing.price %>">
+            <input type="text" name="listing[location]" value="<%= foundListing.location %>">
+            <input type="text" name="listing[country]" value="<%= foundListing.country %>">
+            <button>Update</button>
+        </form>
+    </body>
