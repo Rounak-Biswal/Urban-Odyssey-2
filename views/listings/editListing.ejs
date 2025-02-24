@@ -1,22 +1,4 @@
-<!-- <% layout("/layouts/boilerplate") %>
-
-    <body>
-
-        <form method="post" action="/listings/<%= foundListing._id %>/update?_method=PUT">
-            <input type="text" name="listing[title]" value="<%= foundListing.title %>">
-            <input type="text" name="listing[description]" value="<%= foundListing.description %>">
-            <input type="number" name="listing[price]" value="<%= foundListing.price %>">
-            <input type="text" name="listing[location]" value="<%= foundListing.location %>">
-            <input type="text" name="listing[country]" value="<%= foundListing.country %>">
-            <button>Update</button>
-        </form>
-    </body> -->
-
-
-
-<% layout("/layouts/boilerplate") %>
-
-    <body>
+<!--    <body>
         <form method="post" action="/listings/<%= foundListing._id %>/update?_method=PUT">
             <div class="row">
                 <div class="col-8 offset-2">
@@ -62,6 +44,77 @@
                         <input type="text" name="listing[location]" class="form-control"
                             placeholder="Where is this listing located?" value="<%= foundListing.location %>">
                     </div>
+                    <button class="btn btn-dark">Update</button><br><br>
+                </div>
+            </div>
+        </form>
+    </body> -->
+
+
+<% layout("/layouts/boilerplate") %>
+
+    <body>
+        <form method="post" action="/listings/<%= foundListing._id %>/update?_method=PUT" novalidate
+            class="needs-validation">
+            <div class="row">
+                <div class="col-8 offset-2">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Listing Title</label>
+                        <input type="text" name="listing[title]" class="form-control"
+                            placeholder="Give your listing an eye-catching title!" value="<%= foundListing.title %>"
+                            required>
+                        <div class="valid-feedback">Looks good!</div>
+                        <div class="invalid-feedback">Title is required.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Short Description</label>
+                        <input type="text" name="listing[description]" class="form-control"
+                            placeholder="Describe your listing in a few words..."
+                            value="<%= foundListing.description %>" required>
+                        <div class="valid-feedback">Nice and catchy!</div>
+                        <div class="invalid-feedback">Description needed.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="image" class="form-label">Image URL</label>
+                        <input type="text" name="listing[image][url]" class="form-control"
+                            placeholder="Paste an image link here" value="<%= foundListing.image.url %>" required>
+                        <div class="valid-feedback">Great choice!</div>
+                        <div class="invalid-feedback">Add an image.</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 col-lg-4">
+                            <div class="mb-3">
+                                <label for="price" class="form-label">Price ($)</label>
+                                <input type="number" name="listing[price]" class="form-control"
+                                    placeholder="Set a fair price for your listing" value="<%= foundListing.price %>"
+                                    required>
+                                <div class="valid-feedback">Perfect pricing!</div>
+                                <div class="invalid-feedback">Price is required.</div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-8 col-lg-8">
+                            <div class="mb-3">
+                                <label for="country" class="form-label">Country</label>
+                                <input type="text" name="listing[country]" class="form-control"
+                                    placeholder="Enter the country name" value="<%= foundListing.country %>" required>
+                                <div class="valid-feedback">Location noted!</div>
+                                <div class="invalid-feedback">Country required.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="location" class="form-label">City / Town</label>
+                        <input type="text" name="listing[location]" class="form-control"
+                            placeholder="Where is this listing located?" value="<%= foundListing.location %>" required>
+                        <div class="valid-feedback">Great location!</div>
+                        <div class="invalid-feedback">Enter a city.</div>
+                    </div>
+
                     <button class="btn btn-dark">Update</button><br><br>
                 </div>
             </div>
