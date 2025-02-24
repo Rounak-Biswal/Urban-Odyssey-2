@@ -5,7 +5,8 @@ const Listing = require("./models/listing");
 const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
-const ExpressError = require("./ExpressError");
+const wrapAsync = require("./utils/wrapAsync");
+const ExpressError = require("./utils/ExpressError")
 
 const app = express();
 
@@ -64,56 +65,87 @@ app.get("/testing", async (req, res) => {
 });
 
 // Listings Routes
-app.get("/listings", async (req, res) => {
-    let allListings = await Listing.find({});
-    res.render("listings/allListings", { allListings });
-});
+app.get("/listings",
+    wrapAsync(async (req, res) => {
+        let allListings = await Listing.find({});
+        res.render("listings/allListings", { allListings });
+    }));
 
 app.get("/listings/new", (req, res) => {
     res.render("listings/newListing");
 });
 
-app.get("/listings/:id", async (req, res) => {
-    let { id } = req.params;
-    let foundListing = await Listing.findById(id);
-    res.render("listings/showListing", { foundListing });
-});
+app.get("/listings/:id",
+    wrapAsync(async (req, res) => {
+        let { id } = req.params;
+        let foundListing = await Listing.findById(id);
+        res.render("listings/showListing", { foundListing });
+    })
+);
 
-app.post("/listings/create", async (req, res) => {
-    const listing = new Listing(req.body.listing);
-    await listing.save();
-    res.redirect("/listings");
-});
+app.post("/listings/create",
+    wrapAsync(async (req, res, next) => {
+        const listing = new Listing(req.body.listing);
+        await listing.save();
+        res.redirect("/listings");
+        next(err);
+    }));
 
-app.get("/listings/:id/edit", async (req, res) => {
-    let { id } = req.params;
-    let foundListing = await Listing.findById(id);
-    res.render("listings/editListing", { foundListing });
-});
+app.get("/listings/:id/edit",
+    wrapAsync(async (req, res) => {
+        let { id } = req.params;
+        let foundListing = await Listing.findById(id);
+        res.render("listings/editListing", { foundListing });
+    })
+);
 
-app.put("/listings/:id/update", async (req, res) => {
-    let { id } = req.params;
-    await Listing.findByIdAndUpdate(id, { ...req.body.listing });
-    res.redirect("/listings");
-});
+app.put("/listings/:id/update",
+    wrapAsync(async (req, res) => {
+        let { id } = req.params;
+        await Listing.findByIdAndUpdate(id, { ...req.body.listing });
+        res.redirect("/listings");
+    })
+);
 
-app.delete("/listings/:id/delete", async (req, res) => {
-    let { id } = req.params;
-    await Listing.findByIdAndDelete(id);
-    res.redirect("/listings");
-});
+app.delete("/listings/:id/delete",
+    wrapAsync(async (req, res) => {
+        let { id } = req.params;
+        await Listing.findByIdAndDelete(id);
+        res.redirect("/listings");
+    })
+);
 
 // Error Handling Middleware
-app.use((err, req, res, next) => {
-    console.log("-------Error---------");
-    let { status = 500, msg = "Something went wrong" } = err;
-    res.status(status).send(msg);
-});
+// app.use((err, req, res, next) => {
+//     console.log("-------Error---------");
+//     let { status = 500, msg = "Something went wrong" } = err;
+//     res.status(status).send(msg);
+// });
 
 // 404 Middleware (Must be Last)
-app.use((req, res, next) => {
-    res.status(404).send("404, no route exists");
+// app.use((req, res, next) => {
+//     res.status(404).send("404, no route exists");
+// });
+
+//server side validation
+// app.use((err, req, res, next) => {
+//     let { status, message } = err;
+//     res.status(status).send(message);
+// })
+app.use((err, req, res, next) => {
+    console.log(err); // Log the error for debugging
+
+    if (!err.status) err.status = 500; // Default to 500 if no status is set
+
+    res.status(err.status).send(err.message);
 });
+
+
+//path not found error
+app.use("*", (err, req, res, next) => {
+    // next(new ExpressError(404, "Page Not Found"));
+    res.status(404).send("Page Not Found")
+})
 
 // Start the Server
 app.listen(5600, () => console.log("Server live at port 5600"));
