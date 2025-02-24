@@ -1,28 +1,95 @@
-<% layout("/layouts/boilerplate") %>
+<!-- <% layout("/layouts/boilerplate") %>
 
-    <body>
-        <ul>
-            <li>
-                <%= foundListing.title %>
-            </li>
-            <li>
-                <%= foundListing.description %>
-            </li>
-            <li>
-                <%= foundListing.price %>
-            </li>
-            <li>
-                <%= foundListing.location %>
-            </li>
-            <li>
-                <%= foundListing.country %>
-            </li>
-        </ul>
 
-        <form method="get" action="/listings/<%= foundListing._id %>/edit">
-            <button>Update</button>
-        </form>
-        <form method="post" action="/listings/<%= foundListing._id %>/delete?_method=DELETE">
-            <button>Delete</button>
-        </form>
-    </body>
+    <div class="row">
+        <div class="col-8 offset-2">
+            <h3><%= foundListing.title %></h3>
+            <div class="card">
+                <img src="<%= foundListing.image.url %>" class="show-img" alt="listing image">
+            </div>
+
+            <div class="card-body">
+                <ul>
+                    <li>
+                        <%= foundListing.description %>
+                    </li>
+                    <li>
+                        <%= foundListing.price %>
+                    </li>
+                    <li>
+                        <%= foundListing.location %>
+                    </li>
+                    <li>
+                        <%= foundListing.country %>
+                    </li>
+                </ul>
+            </div>
+
+            <form method="get" action="/listings/<%= foundListing._id %>/edit">
+                <button class="btn btn-dark">Update</button>
+            </form>
+
+            <form method="post" action="/listings/<%= foundListing._id %>/delete?_method=DELETE">
+                <button class="btn btn-dark">Delete</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card text-center">
+        <div class="card-header">
+            Featured
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Special title treatment</h5>
+            <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+            <a href="#" class="btn btn-primary">Go somewhere</a>
+        </div>
+        <div class="card-footer text-body-secondary">
+            2 days ago
+        </div>
+    </div> -->
+
+
+    <% layout("/layouts/boilerplate") %>
+
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h3 class="text-center my-3"><%= foundListing.title %></h3>
+    
+            <!-- Image Container -->
+            <div class="card">
+                <img src="<%= foundListing.image.url %>" class="show-img card-img-top" alt="listing image">
+            </div>
+    
+            <div class="card-body">
+                <ul class="list-group">
+                    <li class="list-group-item"><strong><%= foundListing.description %></strong></li>
+                    <li class="list-group-item"><strong>Price:</strong> $<%= foundListing.price %></li>
+                    <li class="list-group-item"><strong>Location:</strong> <%= foundListing.location %>, <%= foundListing.country %></li>
+                </ul>
+            </div>
+    
+            <!-- Buttons -->
+            <div class="d-flex justify-content-between mt-3 w-25">
+                <form method="get" action="/listings/<%= foundListing._id %>/edit">
+                    <button class="btn btn-dark">Update</button>
+                </form>
+    
+                <form method="post" action="/listings/<%= foundListing._id %>/delete?_method=DELETE">
+                    <button class="btn btn-dark">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Featured Section -->
+    <div class="card text-center mt-4">
+        <div class="card-header">Featured</div>
+        <div class="card-body">
+            <h5 class="card-title">Special title treatment</h5>
+            <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+            <a href="#" class="btn btn-success">Go somewhere</a>
+        </div>
+        <div class="card-footer text-body-secondary">2 days ago</div>
+    </div>
+    
