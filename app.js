@@ -86,6 +86,9 @@ app.get("/listings/:id",
 app.post("/listings/create",
     wrapAsync(async (req, res, next) => {
         const listing = new Listing(req.body.listing);
+        if (!req.body.listing) {
+            throw new ExpressError(400, "Send valid data");
+        }
         await listing.save();
         res.redirect("/listings");
         next(err);
@@ -128,18 +131,11 @@ app.delete("/listings/:id/delete",
 // });
 
 //server side validation
-// app.use((err, req, res, next) => {
-//     let { status, message } = err;
-//     res.status(status).send(message);
-// })
 app.use((err, req, res, next) => {
-    console.log(err); // Log the error for debugging
-
-    if (!err.status) err.status = 500; // Default to 500 if no status is set
-
-    res.status(err.status).send(err.message);
-});
-
+    let { status = 500, message } = err;
+    // res.status(status).send(message);
+    res.render("error.ejs", { message });
+})
 
 //path not found error
 app.use("*", (err, req, res, next) => {
