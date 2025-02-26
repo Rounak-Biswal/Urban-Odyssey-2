@@ -7,6 +7,7 @@ const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const wrapAsync = require("./utils/wrapAsync");
 const ExpressError = require("./utils/ExpressError")
+const listingSchema = require("./schema");
 
 const app = express();
 
@@ -85,13 +86,16 @@ app.get("/listings/:id",
 
 app.post("/listings/create",
     wrapAsync(async (req, res, next) => {
-        const listing = new Listing(req.body.listing);
-        if (!req.body.listing) {
-            throw new ExpressError(400, "Send valid data");
+        console.log(req.body);
+        let result = listingSchema.validate(req.body.listing);
+        console.log(result)
+        if (result.error) {
+            throw new ExpressError(400, result.error.details[0].message);
         }
+
+        const listing = new Listing(req.body.listing);
         await listing.save();
         res.redirect("/listings");
-        next(err);
     }));
 
 app.get("/listings/:id/edit",
@@ -118,30 +122,16 @@ app.delete("/listings/:id/delete",
     })
 );
 
-// Error Handling Middleware
-// app.use((err, req, res, next) => {
-//     console.log("-------Error---------");
-//     let { status = 500, msg = "Something went wrong" } = err;
-//     res.status(status).send(msg);
-// });
-
-// 404 Middleware (Must be Last)
-// app.use((req, res, next) => {
-//     res.status(404).send("404, no route exists");
-// });
-
 //server side validation
 app.use((err, req, res, next) => {
-    let { status = 500, message } = err;
-    // res.status(status).send(message);
-    res.render("error.ejs", { message });
-})
+    let { status = 500, message = "Something went wrong" } = err;
+    res.status(status).json({ error: message });
+});
 
 //path not found error
-app.use("*", (err, req, res, next) => {
-    // next(new ExpressError(404, "Page Not Found"));
-    res.status(404).send("Page Not Found")
-})
+app.use("*", (req, res) => {
+    res.status(404).send("Page Not Found");
+});
 
 // Start the Server
 app.listen(5600, () => console.log("Server live at port 5600"));

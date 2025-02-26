@@ -1,27 +1,3 @@
-// const mongoose = require("mongoose");
-// const Schema = mongoose.Schema;
-
-// const listingSchema = new Schema({
-//     title: {
-//         type: String,
-//         required: true
-//     },
-//     desc: String,
-//     image: {
-//         type: String,
-//         set: (v) =>
-//             v === ""
-//                 ? "https://unsplash.com/photos/concrete-house-near-a-body-of-water-and-forest-XJnP4L958ds"
-//                 : v,
-//     },
-//     price: Number,
-//     location: String,
-//     country: String,
-// })
-
-// const Listing = mongoose.model("Listing", listingSchema);
-// module.exports = Listing;
-
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
