@@ -28,6 +28,18 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
 
+//function to validate schema
+const validateListing = (req, res, next) => {
+    let result = listingSchema.validate(req.body.listing);
+    // console.log(result)
+    if (result.error) {
+        if (result.value === undefined)
+            throw new ExpressError(400, "Listing is required");
+        else
+            throw new ExpressError(400, result.error.details[0].message);
+    }
+}
+
 // Logging Middleware
 app.use((req, res, next) => {
     req.time = new Date(Date.now());
@@ -85,14 +97,8 @@ app.get("/listings/:id",
 );
 
 app.post("/listings/create",
+    validateListing,
     wrapAsync(async (req, res, next) => {
-        console.log(req.body);
-        let result = listingSchema.validate(req.body.listing);
-        console.log(result)
-        if (result.error) {
-            throw new ExpressError(400, result.error.details[0].message);
-        }
-
         const listing = new Listing(req.body.listing);
         await listing.save();
         res.redirect("/listings");
@@ -107,6 +113,7 @@ app.get("/listings/:id/edit",
 );
 
 app.put("/listings/:id/update",
+    validateListing,
     wrapAsync(async (req, res) => {
         let { id } = req.params;
         await Listing.findByIdAndUpdate(id, { ...req.body.listing });
