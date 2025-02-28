@@ -38,13 +38,15 @@
         <div class="col-md-8 offset-md-2">
             <hr>
             <h3>Leave a review</h3>
-            <form action="">
+            <form action="/listings/<%= foundListing._id %>/reviews" method="POST" novalidate class="needs-validation">
                 <div>
-                    <label for="rating" class="form-label">Rating : </label>
-                    <input type="range" name="reviews[rating]" id="rating" min="1" max="5"><br>
+                    <label for="rating" class="form-label">Rating</label>
+                    <input type="range" name="review[rating]" id="rating" min="1" max="5" class="form-range"><br>
                 </div>
-                <textarea name="review[comment]" placeholder="Enter your comment" id="comment"
-                    class="form-control"></textarea><br>
+                <textarea name="review[comment]" placeholder="Enter your comment" id="comment" class="form-control"
+                    required></textarea>
+                <div class="invalid-feedback">Please share your thoughts</div><br>
+
                 <button class="btn btn-dark">submit</button>
             </form>
         </div>

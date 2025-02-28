@@ -2,12 +2,15 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const Listing = require("./models/listing");
+const Review = require("./models/review");
 const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const wrapAsync = require("./utils/wrapAsync");
 const ExpressError = require("./utils/ExpressError")
-const listingSchema = require("./schema");
+// const listingSchema = require("./schema");
+// // const reviewSchema = require("./schema")
+const { listingSchema, reviewSchema } = require("./schema");
 
 const app = express();
 
@@ -28,15 +31,30 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
 
-//function to validate schema
+//function to validate new listing
 const validateListing = (req, res, next) => {
+    // console.log(req.body);
     let result = listingSchema.validate(req.body.listing);
-    // console.log(result)
+    // console.log(result);
     if (result.error) {
         if (result.value === undefined)
             throw new ExpressError(400, "Listing is required");
         else
             throw new ExpressError(400, result.error.details[0].message);
+    }
+    else {
+        next();
+    }
+}
+
+//function to validate review
+const validateReview = (req, res, next) => {
+    let { error } = reviewSchema.validate(req.body);
+    if (error) {
+        throw new ExpressError(400, error.details[0].message);
+    }
+    else {
+        next()
     }
 }
 
@@ -128,6 +146,22 @@ app.delete("/listings/:id/delete",
         res.redirect("/listings");
     })
 );
+
+//for reviews
+app.post("/listings/:id/reviews",
+    validateReview,
+    wrapAsync(async (req, res) => {
+        let { id } = req.params;
+        let listing = await Listing.findById(id);
+        let newReview = new Review(req.body.review);
+        listing.reviews.push(newReview);
+
+        await newReview.save();
+        await listing.save();
+
+        console.log(`new review added : ${newReview}`);
+        res.redirect(`/listings/${id}`);
+    }))
 
 //server side validation
 app.use((err, req, res, next) => {
