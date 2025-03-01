@@ -5,7 +5,7 @@
         <div class="row row-cols-lg-4 row-cols-md-2 row-cols-sm-1 offset-1">
 
             <% allListings.forEach(listing=> { %>
-                <div class="card card-homepage" style="width: 17.5rem;">
+                <div class="card card-homepage listing-card" style="width: 17.5rem;">
                     <a href="/listings/<%= listing._id %>">
                         <img src="<%= listing.image.url %>" class="card-img-top" alt="listing_img"
                             style="height: 12.5rem;">
