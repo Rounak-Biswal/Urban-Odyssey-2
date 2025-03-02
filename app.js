@@ -148,6 +148,7 @@ app.delete("/listings/:id/delete",
 );
 
 //for reviews
+//add new review
 app.post("/listings/:id/reviews",
     validateReview,
     wrapAsync(async (req, res) => {
@@ -160,6 +161,15 @@ app.post("/listings/:id/reviews",
         await listing.save();
 
         console.log(`new review added : ${newReview}`);
+        res.redirect(`/listings/${id}`);
+    }))
+
+//delete review
+app.delete("/listings/:id/reviews/:reviewId",
+    wrapAsync(async (req, res) => {
+        let { id, reviewId } = req.params;
+        await Listing.findByIdAndUpdate(id, { $pull: { reviews: reviewId } })
+        await Review.findByIdAndDelete(reviewId);
         res.redirect(`/listings/${id}`);
     }))
 
