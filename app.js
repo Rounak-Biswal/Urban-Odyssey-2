@@ -1,16 +1,14 @@
 // Import required modules
 const express = require("express");
 const mongoose = require("mongoose");
-const Listing = require("./models/listing");
-const Review = require("./models/review");
 const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
-const wrapAsync = require("./utils/wrapAsync");
 const ExpressError = require("./utils/ExpressError")
-// const listingSchema = require("./schema");
-// // const reviewSchema = require("./schema")
-const { listingSchema, reviewSchema } = require("./schema");
+
+//routers
+const routesForListings = require("./router/listingRoutes");
+const routesForReviews = require("./router/reviewRoutes");
 
 const app = express();
 
@@ -30,33 +28,6 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
-
-//function to validate new listing
-const validateListing = (req, res, next) => {
-    // console.log(req.body);
-    let result = listingSchema.validate(req.body.listing);
-    // console.log(result);
-    if (result.error) {
-        if (result.value === undefined)
-            throw new ExpressError(400, "Listing is required");
-        else
-            throw new ExpressError(400, result.error.details[0].message);
-    }
-    else {
-        next();
-    }
-}
-
-//function to validate review
-const validateReview = (req, res, next) => {
-    let { error } = reviewSchema.validate(req.body);
-    if (error) {
-        throw new ExpressError(400, error.details[0].message);
-    }
-    else {
-        next()
-    }
-}
 
 // Logging Middleware
 app.use((req, res, next) => {
@@ -95,83 +66,9 @@ app.get("/testing", async (req, res) => {
     res.send("Testing successful");
 });
 
-// Listings Routes
-app.get("/listings",
-    wrapAsync(async (req, res) => {
-        let allListings = await Listing.find({});
-        res.render("listings/allListings", { allListings });
-    }));
+app.use("/listings", routesForListings);
+app.use("/listings/:id/reviews", routesForReviews);
 
-app.get("/listings/new", (req, res) => {
-    res.render("listings/newListing");
-});
-
-app.get("/listings/:id",
-    wrapAsync(async (req, res) => {
-        let { id } = req.params;
-        let foundListing = await Listing.findById(id).populate("reviews");
-        res.render("listings/showListing", { foundListing });
-    })
-);
-
-app.post("/listings/create",
-    validateListing,
-    wrapAsync(async (req, res, next) => {
-        const listing = new Listing(req.body.listing);
-        await listing.save();
-        res.redirect("/listings");
-    }));
-
-app.get("/listings/:id/edit",
-    wrapAsync(async (req, res) => {
-        let { id } = req.params;
-        let foundListing = await Listing.findById(id);
-        res.render("listings/editListing", { foundListing });
-    })
-);
-
-app.put("/listings/:id/update",
-    validateListing,
-    wrapAsync(async (req, res) => {
-        let { id } = req.params;
-        await Listing.findByIdAndUpdate(id, { ...req.body.listing });
-        res.redirect("/listings");
-    })
-);
-
-app.delete("/listings/:id/delete",
-    wrapAsync(async (req, res) => {
-        let { id } = req.params;
-        await Listing.findByIdAndDelete(id);
-        res.redirect("/listings");
-    })
-);
-
-//for reviews
-//add new review
-app.post("/listings/:id/reviews",
-    validateReview,
-    wrapAsync(async (req, res) => {
-        let { id } = req.params;
-        let listing = await Listing.findById(id);
-        let newReview = new Review(req.body.review);
-        listing.reviews.push(newReview);
-
-        await newReview.save();
-        await listing.save();
-
-        console.log(`new review added : ${newReview}`);
-        res.redirect(`/listings/${id}`);
-    }))
-
-//delete review
-app.delete("/listings/:id/reviews/:reviewId",
-    wrapAsync(async (req, res) => {
-        let { id, reviewId } = req.params;
-        await Listing.findByIdAndUpdate(id, { $pull: { reviews: reviewId } })
-        await Review.findByIdAndDelete(reviewId);
-        res.redirect(`/listings/${id}`);
-    }))
 
 //server side validation
 app.use((err, req, res, next) => {
