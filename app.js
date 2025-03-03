@@ -4,39 +4,39 @@ const mongoose = require("mongoose");
 const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
-const ExpressError = require("./utils/ExpressError")
+const ExpressError = require("./utils/ExpressError");
 
-//routers
+// Routers
 const routesForListings = require("./router/listingRoutes");
 const routesForReviews = require("./router/reviewRoutes");
 
 const app = express();
 
-// Database connection
+// Database Connection
 const MONGO_URL = "mongodb://127.0.0.1:27017/UrbanOdyssey";
 async function main() {
     await mongoose.connect(MONGO_URL);
 }
 main()
-    .then(() => console.log("Connection to DB successful"))
-    .catch(err => console.log(err));
+    .then(() => console.log("✅ Connected to MongoDB"))
+    .catch(err => console.error("❌ MongoDB Connection Error:", err));
 
 // Middleware Setup
-app.use(express.static(path.join(__dirname, 'public')));
+app.engine("ejs", ejsMate); // Setting EJS as templating engine with ejs-mate for layouts
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
-app.use(express.urlencoded({ extended: true }));
-app.use(methodOverride("_method"));
-app.engine("ejs", ejsMate);
 
-// Logging Middleware
+app.use(express.urlencoded({ extended: true })); // To parse form data
+app.use(methodOverride("_method")); // For PUT & DELETE requests
+app.use(express.static(path.join(__dirname, "public"))); // Serving static files
+
+// Logging Middleware (For Debugging)
 app.use((req, res, next) => {
-    req.time = new Date(Date.now());
-    console.log(`${req.method} request to ${req.path} at ${req.time}`);
+    console.log(`${req.method} request to ${req.path} at ${new Date().toLocaleString()}`);
     next();
 });
 
-// token authentication Middleware
+// Token Authentication Middleware (Example for protected routes)
 const checkToken = (req, res, next) => {
     let { token } = req.query;
     if (token === "myToken") {
@@ -47,39 +47,29 @@ const checkToken = (req, res, next) => {
 
 // Routes
 app.get("/", (req, res) => {
-    res.send("This is root directory");
+    res.send("Welcome to UrbanOdyssey");
 });
 
 app.get("/data", checkToken, (req, res) => {
     res.send("Data accessed successfully");
 });
 
-app.get("/testing", async (req, res) => {
-    let sample = new Listing({
-        title: "Vintage Villa",
-        desc: "England style living",
-        location: "California",
-        country: "United States"
-    });
-    await sample.save();
-    console.log("Sample was saved");
-    res.send("Testing successful");
-});
-
+// Mounting Routers
 app.use("/listings", routesForListings);
 app.use("/listings/:id/reviews", routesForReviews);
 
-
-//server side validation
+// Error handling middleware
 app.use((err, req, res, next) => {
     let { status = 500, message = "Something went wrong" } = err;
-    res.status(status).json({ error: message });
+    res.status(status).render("error", { message, status });
 });
 
-//path not found error
+
+// 404 Handler (Page Not Found)
 app.use("*", (req, res) => {
     res.status(404).send("Page Not Found");
 });
 
 // Start the Server
-app.listen(5600, () => console.log("Server live at port 5600"));
+const PORT = 5600;
+app.listen(PORT, () => console.log(`🚀 Server running at http://localhost:${PORT}`));
