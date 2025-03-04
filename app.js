@@ -50,6 +50,12 @@ app.get("/", (req, res) => {
     res.send("Welcome to UrbanOdyssey");
 });
 
+//cookie testing
+app.get("/addCookies", (req, res) => {
+    res.cookie("name", "Rounak");
+    res.send("done !!");
+})
+
 app.get("/data", checkToken, (req, res) => {
     res.send("Data accessed successfully");
 });
