@@ -5,6 +5,8 @@ const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const ExpressError = require("./utils/ExpressError");
+const session = require("express-session");
+const flash = require("connect-flash");
 
 // Routers
 const routesForListings = require("./router/listingRoutes");
@@ -36,6 +38,16 @@ app.use((req, res, next) => {
     next();
 });
 
+//flash
+app.use(flash());
+
+//session midleware setup
+app.use(session({
+    secret: "MrCupCake",
+    resave: false,
+    saveUninitialized: true
+}))
+
 // Token Authentication Middleware (Example for protected routes)
 const checkToken = (req, res, next) => {
     let { token } = req.query;
@@ -46,8 +58,25 @@ const checkToken = (req, res, next) => {
 };
 
 // Routes
+//playing with session
+app.get("/register", (req, res) => {
+    let { name = "unknown" } = req.query;
+    req.session.name = name;
+    res.redirect("/greet")
+})
+
+app.get("/greet", (req,res)=>{
+    res.send(`Hi ${req.session.name}`)
+})
+//root route
 app.get("/", (req, res) => {
-    res.send("Welcome to UrbanOdyssey");
+    if (req.session.count) {
+        req.session.count++
+    }
+    else {
+        req.session.count = 1
+    }
+    res.send(`Welcome to UrbanOdyssey, you've visited ${req.session.count} times`);
 });
 
 //cookie testing
