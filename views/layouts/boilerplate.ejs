@@ -25,7 +25,19 @@
     <%- include('../includes/navbar.ejs') %>
 
         <div class="container">
-            <%- body %>
+            <% if (successMsg.length > 0) { %>
+                <div class="alert alert-success" role="alert">
+                    <%= successMsg %>
+                </div>
+            <% } %>
+            
+            <% if (errorMsg.length > 0) { %>
+                <div class="alert alert-danger" role="alert">
+                    <%= errorMsg %>
+                </div>
+            <% } %>
+            
+                <%- body %>
         </div>
 
         <!-- footer -->

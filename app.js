@@ -38,15 +38,20 @@ app.use((req, res, next) => {
     next();
 });
 
-//flash
-app.use(flash());
-
 //session midleware setup
 app.use(session({
     secret: "MrCupCake",
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: true,
+    cookie: {
+        expires : Date.now() + 3 * 24 * 60 * 60 * 1000,
+        maxAge: 3 * 24 * 60 * 60 * 1000,
+        httpOnly: true
+    }
 }))
+
+//flash
+app.use(flash());
 
 // Token Authentication Middleware (Example for protected routes)
 const checkToken = (req, res, next) => {
@@ -57,17 +62,31 @@ const checkToken = (req, res, next) => {
     throw new ExpressError(401, "Access Denied");
 };
 
+//middleware to store flash messages
+app.use((req, res, next) => {
+    res.locals.successMsg = req.flash("success");
+    res.locals.errorMsg = req.flash("error");
+    next();
+});
+
 // Routes
 //playing with session
 app.get("/register", (req, res) => {
     let { name = "unknown" } = req.query;
     req.session.name = name;
+    if (req.session.name == "unknown") {
+        req.flash("error", "user not registered");
+    }
+    else {
+        req.flash("success", `${req.session.name} successfully registered`);
+    }
     res.redirect("/greet")
 })
 
-app.get("/greet", (req,res)=>{
-    res.send(`Hi ${req.session.name}`)
+app.get("/greet", (req, res) => {
+    res.render("flashMsg.ejs", { name: req.session.name });
 })
+
 //root route
 app.get("/", (req, res) => {
     if (req.session.count) {
