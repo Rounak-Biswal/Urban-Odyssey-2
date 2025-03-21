@@ -1,0 +1,15 @@
+<!-- <div class="mt-2 w-75 mx-auto"> -->
+    <% if (successMsg.length > 0) { %>
+        <div class="alert alert-success alert-dismissible fade show col-10 offset-1 mt-2" role="alert">
+            <%= successMsg %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <% } %>
+    
+    <% if (errorMsg.length > 0) { %>
+        <div class="alert alert-danger alert-dismissible fade show col-10 offset-1 mt-2" role="alert">
+            <%= errorMsg %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <% } %>
+<!-- </div> -->
