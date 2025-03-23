@@ -8,9 +8,14 @@ const ExpressError = require("./utils/ExpressError");
 const session = require("express-session");
 const flash = require("connect-flash");
 
+const User = require("./models/user")
+const passport = require("passport");
+const LocalStrategy = require("passport-local");
+
 // Routers
 const routesForListings = require("./router/listingRoutes");
 const routesForReviews = require("./router/reviewRoutes");
+const routesForUsers = require("./router/userRoutes");
 
 const app = express();
 
@@ -44,7 +49,7 @@ app.use(session({
     resave: false,
     saveUninitialized: true,
     cookie: {
-        expires : Date.now() + 3 * 24 * 60 * 60 * 1000,
+        expires: Date.now() + 3 * 24 * 60 * 60 * 1000,
         maxAge: 3 * 24 * 60 * 60 * 1000,
         httpOnly: true
     }
@@ -52,6 +57,13 @@ app.use(session({
 
 //flash
 app.use(flash());
+
+//passport setup
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 // Token Authentication Middleware (Example for protected routes)
 const checkToken = (req, res, next) => {
@@ -83,6 +95,16 @@ app.get("/register", (req, res) => {
     res.redirect("/greet")
 })
 
+//playing with authentication
+app.get("/demouser", async (req, res) => {
+    let fakeUser = new User({
+        email: "rounak@gmail.com",
+        username: "Rounak"
+    });
+    let registeredUser = await User.register(fakeUser, "password123");
+    res.send(`Registration done !!\n${registeredUser}`);
+})
+
 app.get("/greet", (req, res) => {
     res.render("flashMsg.ejs", { name: req.session.name });
 })
@@ -111,6 +133,7 @@ app.get("/data", checkToken, (req, res) => {
 // Mounting Routers
 app.use("/listings", routesForListings);
 app.use("/listings/:id/reviews", routesForReviews);
+app.use("/users", routesForUsers);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
