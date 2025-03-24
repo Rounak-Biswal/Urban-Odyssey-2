@@ -4,6 +4,7 @@ const Listing = require("../models/listing");
 const wrapAsync = require("../utils/wrapAsync");
 const ExpressError = require("../utils/ExpressError")
 const { listingSchema } = require("../schema");
+const { isLoggedIn } = require("../utils/middleware");
 
 //function to validate new listing
 const validateListing = (req, res, next) => {
@@ -28,15 +29,17 @@ router.get("/",
         res.render("listings/allListings", { allListings });
     }));
 
-router.get("/new", (req, res) => {
-    res.render("listings/newListing");
-});
+router.get("/new",
+    isLoggedIn,
+    (req, res) => {
+        res.render("listings/newListing");
+    });
 
 router.get("/:id",
     wrapAsync(async (req, res) => {
         let { id } = req.params;
         let foundListing = await Listing.findById(id).populate("reviews");
-        if(!foundListing){
+        if (!foundListing) {
             req.flash("error", "Listing doesn't exist");
             res.redirect("/listings");
         }
@@ -45,6 +48,7 @@ router.get("/:id",
 );
 
 router.post("/create",
+    isLoggedIn,
     validateListing,
     wrapAsync(async (req, res, next) => {
         const listing = new Listing(req.body.listing);
@@ -54,10 +58,16 @@ router.post("/create",
     }));
 
 router.get("/:id/edit",
+    isLoggedIn,
     wrapAsync(async (req, res) => {
+        if (!req.isAuthenticated()) {
+            req.flash("error", "Oops! You need to log in before editing a listing");
+            res.redirect("/users/login");
+        }
+
         let { id } = req.params;
         let foundListing = await Listing.findById(id);
-        if(!foundListing){
+        if (!foundListing) {
             req.flash("error", "Listing doesn't exist");
             res.redirect("/listings");
         }
@@ -66,6 +76,7 @@ router.get("/:id/edit",
 );
 
 router.put("/:id/update",
+    isLoggedIn,
     validateListing,
     wrapAsync(async (req, res) => {
         let { id } = req.params;
@@ -76,7 +87,13 @@ router.put("/:id/update",
 );
 
 router.delete("/:id/delete",
+    isLoggedIn,
     wrapAsync(async (req, res) => {
+        if (!req.isAuthenticated()) {
+            req.flash("error", "Oops! You need to log in before deleting a listing");
+            res.redirect("/users/login");
+        }
+
         let { id } = req.params;
         await Listing.findByIdAndDelete(id);
         req.flash("success", "Listing succcessfully deleted !!");
