@@ -13,6 +13,16 @@
                 <a class="nav-link" href="/listings">All Listings</a>
                 <a class="nav-link" href="/listings/new">Add new listings</a>
             </div>
+            <div class="navbar-nav nav-auth">
+                <% if(!currUserData){ %>
+                    <a class="nav-link" href="/users/signup">Sign up</a>
+                    <a class="nav-link" href="/users/login">Login</a>
+                <% } %>
+
+                <% if(currUserData){ %>
+                    <a class="nav-link" href="/users/logout">Logout</a>
+                <% } %>
+            </div>
         </div>
     </div>
 </nav>

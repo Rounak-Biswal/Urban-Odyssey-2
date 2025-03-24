@@ -78,6 +78,7 @@ const checkToken = (req, res, next) => {
 app.use((req, res, next) => {
     res.locals.successMsg = req.flash("success");
     res.locals.errorMsg = req.flash("error");
+    res.locals.currUserData = req.user;
     next();
 });
 

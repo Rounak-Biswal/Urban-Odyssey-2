@@ -38,9 +38,11 @@ router.post("/login",
 
 router.get("/logout", (req, res, next) => {
     req.logout((err) => {
-        return next(err);
+        if (err) return next(err); // Pass error to Express error handler
+        req.flash("success", "Successfully logged out!!");
+        res.redirect("/listings");
     });
-    req.flash("Successfully logged out!!");
-    res.redirect("/listings");
-})
+});
+
+
 module.exports = router

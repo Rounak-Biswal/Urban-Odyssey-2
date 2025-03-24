@@ -74,6 +74,15 @@ body {
     font-size: 1.1rem;
 }
 
+.nav-auth{
+    /* border: solid 1px black; */
+    display: flex;
+    justify-content: end;
+}
+
+.nav-auth a{
+    margin-left: 1rem;
+}
 
 /*FOOTER */
 footer {
