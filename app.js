@@ -79,7 +79,7 @@ app.use((req, res, next) => {
     res.locals.successMsg = req.flash("success");
     res.locals.errorMsg = req.flash("error");
     res.locals.currUserData = req.user;
-    res.locals.currPath = req.originalUrl;
+    // res.locals.currPath;
     next();
 });
 
