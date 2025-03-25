@@ -8,13 +8,18 @@ router.get("/signup", (req, res) => {
     res.render("users/signup")
 })
 
-router.post("/signup", wrapAsync(async (req, res) => {
+router.post("/signup", wrapAsync(async (req, res, next) => {
     try {
         const { email, username, password } = req.body.user;
         const newUser = new User({ username, email });
-        await User.register(newUser, password);
-        req.flash("success", "User successfully registered");
-        res.redirect("/listings");
+        const registeredUser = await User.register(newUser, password);         //data is saved to DB i.e signup successful
+        req.login(registeredUser, (err) => {
+            if (err) {
+                return next(err)
+            }
+            req.flash("success", "user successfully logged in")
+            res.redirect("/listings");
+        })               //automatical login upon signup
     } catch (err) {
         req.flash("error", err.message);
         res.redirect("/users/signup");
