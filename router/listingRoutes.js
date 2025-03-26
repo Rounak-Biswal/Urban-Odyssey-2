@@ -43,6 +43,7 @@ router.get("/:id",
             req.flash("error", "Listing doesn't exist");
             res.redirect("/listings");
         }
+        console.log(res.locals.currUserData._id, "...", foundListing.owner._id)
         res.render("listings/showListing", { foundListing });
     })
 );

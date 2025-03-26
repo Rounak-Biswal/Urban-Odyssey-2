@@ -10,7 +10,7 @@
             <div class="card listing-card">
                 <img src="<%= foundListing.image.url %>" class="show-img card-img-top" alt="listing image">
             </div>
-            
+
             <div class="author mb-2" style="text-align: right;">
                 created by <i>@<%= foundListing.owner.username %>
             </div>
@@ -27,15 +27,17 @@
                     </li>
                 </ul>
                 <!-- Buttons -->
-                <div class="d-flex justify-content-between mt-3 w-25">
-                    <form method="get" action="/listings/<%= foundListing._id %>/edit">
-                        <button class="btn btn-dark">Update</button>
-                    </form>
+                <% if(currUserData && currUserData._id.equals(foundListing.owner._id)){ %>
+                    <div class="d-flex justify-content-between mt-3 w-25">
+                        <form method="get" action="/listings/<%= foundListing._id %>/edit">
+                            <button class="btn btn-dark">Update</button>
+                        </form>
 
-                    <form method="post" action="/listings/<%= foundListing._id %>/delete?_method=DELETE">
-                        <button class="btn btn-dark">Delete</button>
-                    </form>
-                </div>
+                        <form method="post" action="/listings/<%= foundListing._id %>/delete?_method=DELETE">
+                            <button class="btn btn-dark">Delete</button>
+                        </form>
+                    </div>
+                <% } %>
             </div>
         </div>
 
