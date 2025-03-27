@@ -4,7 +4,7 @@ const Listing = require("../models/listing");
 const wrapAsync = require("../utils/wrapAsync");
 const ExpressError = require("../utils/ExpressError")
 const { listingSchema } = require("../schema");
-const { isLoggedIn } = require("../utils/middleware");
+const { isLoggedIn, isOwner } = require("../utils/middleware");
 
 //function to validate new listing
 const validateListing = (req, res, next) => {
@@ -43,7 +43,6 @@ router.get("/:id",
             req.flash("error", "Listing doesn't exist");
             res.redirect("/listings");
         }
-        console.log(res.locals.currUserData._id, "...", foundListing.owner._id)
         res.render("listings/showListing", { foundListing });
     })
 );
@@ -61,6 +60,7 @@ router.post("/create",
 
 router.get("/:id/edit",
     isLoggedIn,
+    isOwner,
     wrapAsync(async (req, res) => {
         if (!req.isAuthenticated()) {
             req.flash("error", "Oops! You need to log in before editing a listing");
@@ -79,6 +79,7 @@ router.get("/:id/edit",
 
 router.put("/:id/update",
     isLoggedIn,
+    isOwner,
     validateListing,
     wrapAsync(async (req, res) => {
         let { id } = req.params;
@@ -90,6 +91,7 @@ router.put("/:id/update",
 
 router.delete("/:id/delete",
     isLoggedIn,
+    isOwner,
     wrapAsync(async (req, res) => {
         if (!req.isAuthenticated()) {
             req.flash("error", "Oops! You need to log in before deleting a listing");

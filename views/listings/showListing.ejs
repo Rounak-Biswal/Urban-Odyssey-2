@@ -27,7 +27,7 @@
                     </li>
                 </ul>
                 <!-- Buttons -->
-                <% if(currUserData && currUserData._id.equals(foundListing.owner._id)){ %>
+                
                     <div class="d-flex justify-content-between mt-3 w-25">
                         <form method="get" action="/listings/<%= foundListing._id %>/edit">
                             <button class="btn btn-dark">Update</button>
@@ -37,7 +37,7 @@
                             <button class="btn btn-dark">Delete</button>
                         </form>
                     </div>
-                <% } %>
+                
             </div>
         </div>
 

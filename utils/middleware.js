@@ -1,3 +1,5 @@
+const Listing = require("../models/listing")
+
 module.exports.isLoggedIn = (req, res, next) => {
     if (!req.isAuthenticated()) {
         // console.log(req.originalUrl);
@@ -13,4 +15,15 @@ module.exports.saveRedirectUrl = (req, res, next) => {
         res.locals.currPath = req.session.currPath;
     }
     next()
+}
+
+module.exports.isOwner = async (req, res, next) => {
+    let { id } = req.params;
+    let foundListing = await Listing.findById(id)
+    console.log("req.user : " + req.user._id.toString(), "...", "listing : " + foundListing.owner);
+    if (!req.user._id.equals(foundListing.owner)) {
+        req.flash("error", "You don't have permission to perform this operation");
+        return res.redirect(`/listings/${id}`);
+    }
+    next();
 }
