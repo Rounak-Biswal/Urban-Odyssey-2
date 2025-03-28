@@ -2,34 +2,14 @@ const express = require("express");
 const router = express.Router();
 const wrapAsync = require("../utils/wrapAsync");
 const { saveRedirectUrl } = require("../utils/middleware")
-const User = require("../models/user");
 const passport = require("passport");
+const { signup, renderLoginForm, renderSignupForm, logout, login } = require("../controller/userController");
 
-router.get("/signup", (req, res) => {
-    res.render("users/signup")
-})
+router.get("/signup", renderSignupForm)
 
-router.post("/signup", wrapAsync(async (req, res, next) => {
-    try {
-        const { email, username, password } = req.body.user;
-        const newUser = new User({ username, email });
-        const registeredUser = await User.register(newUser, password);         //data is saved to DB i.e signup successful
-        req.login(registeredUser, (err) => {
-            if (err) {
-                return next(err)
-            }
-            req.flash("success", "user successfully logged in")
-            res.redirect("/listings");
-        })               //automatical login upon signup
-    } catch (err) {
-        req.flash("error", err.message);
-        res.redirect("/users/signup");
-    }
-}))
+router.post("/signup", wrapAsync(signup))
 
-router.get("/login", (req, res) => {
-    res.render("users/login")
-})
+router.get("/login", renderLoginForm)
 
 router.post("/login",
     saveRedirectUrl,
@@ -37,21 +17,9 @@ router.post("/login",
         failureRedirect: "/users/login",
         failureFlash: true
     }),
-    async (req, res) => {
-        req.flash("success", "User successfuly logged in");
-        // res.redirect("/listings");
-        let redirectUrl = res.locals.currPath || "/listings"
-        res.redirect(redirectUrl);
-    }
+    login
 )
 
-router.get("/logout", (req, res, next) => {
-    req.logout((err) => {
-        if (err) return next(err); // Pass error to Express error handler
-        req.flash("success", "Successfully logged out!!");
-        res.redirect("/listings");
-    });
-});
-
+router.get("/logout", logout);
 
 module.exports = router
