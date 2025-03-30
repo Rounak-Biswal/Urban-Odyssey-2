@@ -1,3 +1,6 @@
+require("dotenv").config();
+console.log(process.env.CLOUD_API_KEY)
+
 // Import required modules
 const express = require("express");
 const mongoose = require("mongoose");

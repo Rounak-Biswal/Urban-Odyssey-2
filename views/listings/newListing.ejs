@@ -1,58 +1,7 @@
 <% layout("/layouts/boilerplate") %>
 
-    <!--    <body>
-        <form method="post" action="/listings/create" novalidate class="needs-validation">
-            <div class="row">
-                <div class="col-8 offset-2">
-                    <div class="mb-3">
-                        <label for="title" class="form-label">Listing Title</label>
-                        <input type="text" name="listing[title]" class="form-control"
-                            placeholder="Give your listing an eye-catching title!" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="description" class="form-label">Short Description</label>
-                        <input type="text" name="listing[description]" class="form-control"
-                            placeholder="Describe your listing in a few words..." required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="image" class="form-label">Image URL</label>
-                        <input type="text" name="listing[image][url]" class="form-control"
-                            placeholder="Paste an image link here">
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-4 col-lg-4">
-                            <div class="mb-3">
-                                <label for="price" class="form-label">Price ($)</label>
-                                <input type="number" name="listing[price]" class="form-control"
-                                    placeholder="Set a fair price for your listing" required>
-                            </div>
-                        </div>
-
-                        <div class="col-md-8 col-lg-8">
-                            <div class="mb-3">
-                                <label for="country" class="form-label">Country</label>
-                                <input type="text" name="listing[country]" class="form-control"
-                                    placeholder="Enter the country name" required>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="location" class="form-label">City / Town</label>
-                        <input type="text" name="listing[location]" class="form-control"
-                            placeholder="Where is this listing located?" required>
-                    </div>
-                    <button class="btn btn-dark">Create Listing</button><br><br>
-                </div>
-            </div>
-        </form>
-    </body> -->
-
     <body>
-        <form method="post" action="/listings/create" novalidate class="needs-validation">
+        <form method="post" action="/listings/create" novalidate class="needs-validation" enctype="multipart/form-data">
             <div class="row">
                 <div class="col-8 offset-2">
                     <div class="mb-3">
@@ -71,10 +20,18 @@
                         <div class="invalid-feedback">Description needed.</div>
                     </div>
 
-                    <div class="mb-3">
+                    <!-- <div class="mb-3">
                         <label for="image" class="form-label">Image URL</label>
                         <input type="text" name="listing[image][url]" class="form-control"
                             placeholder="Paste an image link here">
+                        <div class="valid-feedback">Great choice!</div>
+                        <div class="invalid-feedback">Add an image.</div>
+                    </div> -->
+
+                    <div class="mb-3">
+                        <label for="image" class="form-label">Image Upload</label>
+                        <input type="file" name="listing[image]" class="form-control"
+                            placeholder="Upload image here">
                         <div class="valid-feedback">Great choice!</div>
                         <div class="invalid-feedback">Add an image.</div>
                     </div>

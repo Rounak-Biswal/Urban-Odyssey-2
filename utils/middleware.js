@@ -14,7 +14,9 @@ module.exports.validateReview = (req, res, next) => {
 }
 
 module.exports.validateListing = (req, res, next) => {
-    // console.log(req.body);
+    console.log("Req body:", req.body);
+    console.log("Req file:", req.file);
+
     let result = listingSchema.validate(req.body.listing);
     // console.log(result);
     if (result.error) {
@@ -29,6 +31,7 @@ module.exports.validateListing = (req, res, next) => {
 }
 
 module.exports.isLoggedIn = (req, res, next) => {
+    console.log("at authentication stage : " + req.body);
     if (!req.isAuthenticated()) {
         // console.log(req.originalUrl);
         req.session.currPath = req.originalUrl;
