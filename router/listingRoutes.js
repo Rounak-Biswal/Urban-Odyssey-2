@@ -19,7 +19,9 @@ router.post("/create", isLoggedIn, upload.single("listing[image]"), validateList
 
 router.get("/:id/edit", isLoggedIn, isOwner, wrapAsync(renderEditForm));
 
-router.put("/:id/update", isLoggedIn, isOwner, validateListing, wrapAsync(editListing));
+// router.put("/:id/update", isLoggedIn, isOwner, upload.single("listing[image]"), validateListing, wrapAsync(editListing));
+router.put("/:id/update", isLoggedIn, isOwner, upload.single("listing[image]"), validateListing, wrapAsync(editListing));
+
 
 router.delete("/:id/delete", isLoggedIn, isOwner, wrapAsync(deleteListing));
 

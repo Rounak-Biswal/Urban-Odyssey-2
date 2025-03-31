@@ -14,11 +14,10 @@ module.exports.validateReview = (req, res, next) => {
 }
 
 module.exports.validateListing = (req, res, next) => {
-    console.log("Req body:", req.body);
-    console.log("Req file:", req.file);
+    // console.log("at validation stage : " + req.body);
+    // console.log("req.body.listing:", JSON.stringify(req.body.listing, null, 2));
 
     let result = listingSchema.validate(req.body.listing);
-    // console.log(result);
     if (result.error) {
         if (result.value === undefined)
             throw new ExpressError(400, "Listing is required");
@@ -31,7 +30,7 @@ module.exports.validateListing = (req, res, next) => {
 }
 
 module.exports.isLoggedIn = (req, res, next) => {
-    console.log("at authentication stage : " + req.body);
+    // console.log("at authentication stage : " + req.body);
     if (!req.isAuthenticated()) {
         // console.log(req.originalUrl);
         req.session.currPath = req.originalUrl;
@@ -51,7 +50,7 @@ module.exports.saveRedirectUrl = (req, res, next) => {
 module.exports.isOwner = async (req, res, next) => {
     let { id } = req.params;
     let foundListing = await Listing.findById(id)
-    console.log("req.user : " + req.user._id.toString(), "...", "listing : " + foundListing.owner);
+    // console.log("req.user : " + req.user._id.toString(), "...", "listing : " + foundListing.owner);
     if (!req.user._id.equals(foundListing.owner)) {
         req.flash("error", "You don't have permission to perform this operation");
         return res.redirect(`/listings/${id}`);
@@ -62,7 +61,7 @@ module.exports.isOwner = async (req, res, next) => {
 module.exports.isAuthor = async (req, res, next) => {
     let { reviewId, id } = req.params;
     let currReview = await Review.findById(reviewId);
-    console.log("currReview : " + currReview, "\n...\n", "currUser : " + req.user);
+    // console.log("currReview : " + currReview, "\n...\n", "currUser : " + req.user);
     if (!currReview.author.equals(req.user._id)) {
         req.flash("error", "you are not the author of this review");
         return res.redirect(`/listings/${id}`);
