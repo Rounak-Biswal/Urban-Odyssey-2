@@ -1,5 +1,8 @@
 <% layout("/layouts/boilerplate") %>
-
+    <script>
+        const mapTokenAPI = "<%= process.env.MAP_KEY %>"
+        const coordinates = <%- JSON.stringify(foundListing.geometry.coordinates) %>
+    </script>
     <div class="row">
         <div class="col-md-8 offset-md-2">
             <h3 class="text-center my-3">
@@ -12,32 +15,35 @@
             </div>
 
             <div class="author mb-2" style="text-align: right;">
-                created by <i>@<%= foundListing.owner.username %>
+                created by <i>@<%= foundListing.owner.username %></i>
             </div>
 
             <div class="card-body">
                 <ul class="list-group">
-                    <li class="list-group-item"><strong>
+                    <li class="list-group-item">
+                        <strong>
                             <%= foundListing.description %>
-                        </strong></li>
-                    <li class="list-group-item"><strong>Price:</strong> $<%= foundListing.price %>
+                        </strong>
                     </li>
-                    <li class="list-group-item"><strong>Location:</strong>
+                    <li class="list-group-item">
+                        <strong>Price:</strong> $<%= foundListing.price %>
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Location:</strong>
                         <%= foundListing.location %>, <%= foundListing.country %>
                     </li>
                 </ul>
-                <!-- Buttons -->
-                
-                    <div class="d-flex justify-content-between mt-3 w-25">
-                        <form method="get" action="/listings/<%= foundListing._id %>/edit">
-                            <button class="btn btn-dark">Update</button>
-                        </form>
 
-                        <form method="post" action="/listings/<%= foundListing._id %>/delete?_method=DELETE">
-                            <button class="btn btn-dark">Delete</button>
-                        </form>
-                    </div>
-                
+                <!-- Buttons -->
+                <div class="d-flex justify-content-between mt-3 w-25">
+                    <form method="get" action="/listings/<%= foundListing._id %>/edit">
+                        <button class="btn btn-dark">Update</button>
+                    </form>
+
+                    <form method="post" action="/listings/<%= foundListing._id %>/delete?_method=DELETE">
+                        <button class="btn btn-dark">Delete</button>
+                    </form>
+                </div>
             </div>
         </div>
 
@@ -45,15 +51,13 @@
             <div class="col-md-8 offset-md-2">
                 <hr>
                 <h3>Leave a review</h3>
-                <form action="/listings/<%= foundListing._id %>/reviews" method="POST" novalidate class="needs-validation">
-                    <!-- <div>
-                        <label for="rating" class="form-label">Rating</label>
-                        <input type="range" name="review[rating]" id="rating" min="1" max="5" class="form-range"><br>
-                    </div> -->
+                <form action="/listings/<%= foundListing._id %>/reviews" method="POST" novalidate
+                    class="needs-validation">
 
                     <fieldset class="starability-basic">
                         <legend>Rating</legend>
-                        <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="0" checked aria-label="No rating." />
+                        <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="0" checked
+                            aria-label="No rating." />
                         <input type="radio" id="first-rate1" name="review[rating]" value="1" />
                         <label for="first-rate1" title="Terrible">1 star</label>
                         <input type="radio" id="first-rate2" name="review[rating]" value="2" />
@@ -64,58 +68,72 @@
                         <label for="first-rate4" title="Very good">4 stars</label>
                         <input type="radio" id="first-rate5" name="review[rating]" value="5" />
                         <label for="first-rate5" title="Amazing">5 stars</label>
-                      </fieldset>
+                    </fieldset>
 
                     <textarea name="review[comment]" placeholder="Enter your comment" id="comment" class="form-control"
                         required></textarea>
                     <div class="invalid-feedback">Please share your thoughts</div><br>
-    
-                    <button class="btn btn-dark">submit</button>
+
+                    <button class="btn btn-dark">Submit</button>
                 </form>
             </div>
-        <% } %>
+            <% } %>
 
-        <div class="col-md-8 offset-md-2">
-            <hr>
-            <h3>All Reviews</h3>
+                <% if(foundListing.reviews.length> 0){ %>
+                    <div class="col-md-8 offset-md-2">
+                        <hr>
+                        <div class="row">
+                            <h3>All Reviews</h3>
+                            <% for(let review of foundListing.reviews){ %>
+                                <div class="card col-5 mt-2 ms-2">
+                                    <div class="card-body">
+                                        <div class="card-text">
+                                            @<%= review.author.username %>
+                                        </div>
 
-            <div class="row">
-                <% for(review of foundListing.reviews){ %>
-                    <div class="card col-5 mt-2 ms-2">
-                        <div class="card-body">
-                            <!-- <div class="card-title"></i></div> -->
-                            <div class="card-text">
-                                @<%= review.author.username %>
-                            </div>
-                            
-                            <p class="starability-result card-text" data-rating=<%= review.rating %>>
-                                Rated: 3 stars
-                            </p>
+                                        <p class="starability-result card-text" data-rating="<%= review.rating %>">
+                                            Rated: <%= review.rating %> stars
+                                        </p>
 
-                            <div class="card-text">
-                                <%= review.comment %>
-                            </div>
-
+                                        <div class="card-text">
+                                            <%= review.comment %>
+                                        </div>
+                                    </div>
+                                    <form method="POST"
+                                        action="/listings/<%= foundListing._id %>/reviews/<%= review._id %>?_method=DELETE">
+                                        <button class="btn btn-dark btn-sm">Delete</button>
+                                    </form>
+                                </div>
+                                <% } %>
                         </div>
-                        <form method="POST"
-                            action="/listings/<%= foundListing._id %>/reviews/<%= review._id %>?_method=DELETE">
-                            <button class="btn btn-dark btn-sm">Delete</button>
-                        </form>
                     </div>
                     <% } %>
-            </div>
 
-        </div>
+                        <!-- Featured Section -->
+                        <div class="col-md-8 offset-md-2">
+                            <div class="card text-center mt-4">
+                                <div class="card-header">Featured</div>
+                                <div class="card-body">
+                                    <h5 class="card-title">Special title treatment</h5>
+                                    <p class="card-text">With supporting text below as a natural lead-in to additional
+                                        content.</p>
+                                    <a href="#" class="btn btn-success">Go somewhere</a>
+                                </div>
+                                <div class="card-footer text-body-secondary">2 days ago</div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-8 offset-md-2 mb-3">
+                            <p>
+                                <%= foundListing.geometry %>
+                            </p>
+                        </div>
+
+                        <div class="col-md-8 offset-md-2 mb-3">
+                            <hr>
+                            <h3>Where you'll be</h3>
+                            <div id="map"></div>
+                        </div>
     </div>
 
-
-    <!-- Featured Section -->
-    <div class="card text-center mt-4">
-        <div class="card-header">Featured</div>
-        <div class="card-body">
-            <h5 class="card-title">Special title treatment</h5>
-            <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-            <a href="#" class="btn btn-success">Go somewhere</a>
-        </div>
-        <div class="card-footer text-body-secondary">2 days ago</div>
-    </div>
+    <script src="/js/map.js"></script>
