@@ -1,27 +1,34 @@
 <nav class="navbar navbar-expand-md navbar-light bg-light border-bottom sticky-top px-5">
     <div class="container-fluid">
         <div class="logo">
-            <a class="navbar-brand" href="/"><i class="fa-solid fa-mountain-city"></i></i></a>
-            <a class="navbar-brand-text" href="/">Urban <br>Odyssey</a>
+            <a class="navbar-brand" href="/listings"><i class="fa-solid fa-mountain-city"></i></i></a>
+            <a class="navbar-brand-text" href="/listings">Urban <br>Odyssey</a>
         </div>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <div class="navbar-nav mx-auto">
-                <a class="nav-link" href="/">Home</a>
-                <a class="nav-link" href="/listings">All Listings</a>
-                <a class="nav-link" href="/listings/new">Add new listings</a>
+            <div class="navbar-nav ms-auto mx-3" style="justify-content: flex-start;  padding-left: 2rem;">
+                <a class="nav-link" href="/listings">Explore</a>
             </div>
-            <div class="navbar-nav nav-auth">
+
+            <div class="navbar-nav ms-auto mx-3" style="justify-content: flex-start; ">
+                <form class="d-flex" role="search">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success" type="submit">Search</button>
+                </form>
+            </div>
+
+            <div class="navbar-nav nav-auth ms-auto mx-3" style="">
+                <a class="nav-link" href="/listings/new">Add new listings</a>
                 <% if(!currUserData){ %>
                     <a class="nav-link" href="/users/signup">Sign up</a>
                     <a class="nav-link" href="/users/login">Login</a>
-                <% } %>
+                    <% } %>
 
-                <% if(currUserData){ %>
-                    <a class="nav-link" href="/users/logout">Logout</a>
-                <% } %>
+                        <% if(currUserData){ %>
+                            <a class="nav-link" href="/users/logout">Logout</a>
+                            <% } %>
             </div>
         </div>
     </div>
